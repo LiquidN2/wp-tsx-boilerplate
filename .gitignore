@@ -1,3 +1,8 @@
-node_modules
-dist
 .DS_Store
+node_modules
+dist/**/*.html
+dist/**/*.js
+dist/**/*.js.map
+dist/**/*.js.LICENSE.txt
+dist/**/*.css
+dist/**/*.css.map

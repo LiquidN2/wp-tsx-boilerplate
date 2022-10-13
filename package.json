@@ -1,7 +1,7 @@
 {
   "name": "wp-tsx-boilerplate",
   "version": "1.0.0",
-  "description": "An HTML, SCSS, Typescript boilerplate using Webpack build",
+  "description": "React Application Boilerplate with Webpack build",
   "scripts": {
     "watch": "webpack --watch",
     "start": "webpack serve --open --config webpack.dev.js",

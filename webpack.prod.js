@@ -2,6 +2,7 @@ const path = require('path');
 const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
@@ -10,7 +11,10 @@ module.exports = merge(common, {
   devtool: 'source-map',
 
   plugins: [
-    new MiniCssExtractPlugin({ filename: 'style.css' }),
+    new MiniCssExtractPlugin({
+      filename: 'style.css',
+      chunkFilename: '[id].css',
+    }),
 
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
@@ -28,9 +32,31 @@ module.exports = merge(common, {
         use: 'ts-loader',
       },
 
-      // Load CSS, SASS, SCSS
+      // Load CSS, SASS, SCSS Module
       {
-        test: /\.s?css$/i,
+        test: /\.module\.(css|sass|scss)$/,
+        use: [
+          // Extract CSS from JS
+          MiniCssExtractPlugin.loader,
+
+          // Translates CSS into CommonJS
+          {
+            loader: 'css-loader',
+            options: { modules: true },
+          },
+
+          // Add PostCSS Autoprefixer
+          'postcss-loader',
+
+          // Compiles Sass to CSS
+          'sass-loader',
+        ],
+      },
+
+      // Load CSS, SASS, SCSS exclude module
+      {
+        test: /\.(css|sass|scss)$/,
+        exclude: /\.module\.(css|sass|scss)$/,
         use: [
           // Extract CSS from JS
           MiniCssExtractPlugin.loader,
@@ -38,7 +64,7 @@ module.exports = merge(common, {
           // Translates CSS into CommonJS
           'css-loader',
 
-          // Add PostCSS Autoprefixer (see postcss.config.js)
+          // Add PostCSS Autoprefixer
           'postcss-loader',
 
           // Compiles Sass to CSS
@@ -46,5 +72,9 @@ module.exports = merge(common, {
         ],
       },
     ],
+  },
+
+  optimization: {
+    minimizer: [new CssMinimizerPlugin()],
   },
 });

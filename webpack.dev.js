@@ -32,9 +32,9 @@ module.exports = merge(common, {
         use: 'ts-loader',
       },
 
-      // Load CSS, SASS, SCSS
+      // Load CSS, SASS, SCSS modules
       {
-        test: /\.s?css$/i,
+        test: /\.module\.(css|sass|scss)$/,
         use: [
           // Creates `style` nodes from JS strings
           'style-loader',
@@ -42,7 +42,39 @@ module.exports = merge(common, {
           // Translates CSS into CommonJS
           {
             loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 2,
+              modules: true,
+            },
+          },
+
+          // Add PostCSS Autoprefixer
+          'postcss-loader',
+
+          // Compiles Sass to CSS
+          {
+            loader: 'sass-loader',
             options: { sourceMap: true },
+          },
+        ],
+      },
+
+      // Load CSS, SASS, SCSS
+      {
+        test: /\.(css|sass|scss)$/,
+        exclude: /\.module\.(css|sass|scss)$/,
+        use: [
+          // Creates `style` nodes from JS strings
+          'style-loader',
+
+          // Translates CSS into CommonJS
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 2,
+            },
           },
 
           // Add PostCSS Autoprefixer
